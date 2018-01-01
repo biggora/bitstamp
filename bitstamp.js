@@ -22,12 +22,11 @@ var BitstampError = function BitstampError(message, meta) {
   this.meta = meta;
 };
 
-var Bitstamp = function(key, secret, client_id, timeout, host) {
+var Bitstamp = function(key, secret, client_id, timeout) {
   this.key = key;
   this.secret = secret;
   this.client_id = client_id;
   this.timeout = timeout || 5000;
-  this.host = host || 'www.bitstamp.net';
 
   _.bindAll(this);
 }
@@ -35,7 +34,7 @@ var Bitstamp = function(key, secret, client_id, timeout, host) {
 Bitstamp.prototype._request = function(method, path, data, callback, args) {
   var timeout = this.timeout;
   var options = {
-    host: this.host,
+    host: 'www.bitstamp.net',
     path: path,
     method: method,
     headers: {
@@ -164,6 +163,14 @@ Bitstamp.prototype.transactions = function(market, options, callback) {
     options = undefined;
   }
   this._get(market, 'transactions', callback, options);
+}
+
+Bitstamp.prototype.markets = function(options, callback) {
+    if(!callback) {
+        callback = options;
+        options = undefined;
+    }
+    this._get(null, 'v2/trading-pairs-info', callback, options);
 }
 
 Bitstamp.prototype.ticker = function(market, callback) {
